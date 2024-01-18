@@ -1,95 +1,75 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import {
+  Annotation,
+  ComposableMap,
+  Geographies,
+  Geography,
+  ZoomableGroup,
+} from "react-simple-maps";
+
+import styles from "./page.module.css";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const geoUrl =
+    "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+
+  const countries = [
+    "Netherlands",
+    "Germany",
+    "Czech Republic",
+    "Hungary",
+    "Austria",
+    "France",
+  ];
+
+  const router = useRouter();
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <ComposableMap>
+        <ZoomableGroup center={[20, 50]} zoom={4}>
+          <Geographies
+            geography="/geojson.json"
+            fill="#D6D6DA"
+            stroke="#FFFFFF"
+            strokeWidth={0.2}
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+            {({ geographies }: any) =>
+              geographies.map((geo: any) =>
+                countries.includes(geo.properties.NAME) ? (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    style={{
+                      default: { outline: "none", fill: "black" },
+                      hover: { outline: "none", fill: "blue" },
+                      pressed: { outline: "none", fill: "black" },
+                    }}
+                    onClick={() => {
+                      router.push(`/${geo.properties.NAME}`);
+                    }}
+                  />
+                ) : (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    onClick={() => {
+                      console.log(geo);
+                    }}
+                    style={{
+                      default: { outline: "none" },
+                      hover: { outline: "none", fill: "#F53" },
+                      pressed: { outline: "none", fill: "#E42" },
+                    }}
+                  />
+                )
+              )
+            }
+          </Geographies>
+        </ZoomableGroup>
+      </ComposableMap>
     </main>
-  )
+  );
 }

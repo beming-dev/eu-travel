@@ -12,9 +12,6 @@ import styles from "./page.module.css";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const geoUrl =
-    "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
-
   const countries = [
     "Netherlands",
     "Germany",

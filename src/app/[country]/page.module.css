@@ -1,0 +1,14 @@
+.main {
+  display: flex;
+  flex-direction: center;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: white;
+}
+.imageBox {
+  position: relative;
+  width: 500px;
+  height: 500px;
+}

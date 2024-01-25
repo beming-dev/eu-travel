@@ -10,10 +10,15 @@
   },
   "dependencies": {
     "@types/react-simple-maps": "^3.0.4",
+    "axios": "^1.6.5",
+    "fs": "^0.0.1-security",
     "next": "14.0.4",
+    "path": "^0.12.7",
     "react": "^18",
     "react-dom": "^18",
-    "react-simple-maps": "^3.0.0"
+    "react-simple-maps": "^3.0.0",
+    "swipe": "^1.7.7",
+    "swiper": "^11.0.5"
   },
   "devDependencies": {
     "@types/node": "^20",

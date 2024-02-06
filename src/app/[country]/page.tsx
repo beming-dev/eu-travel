@@ -8,18 +8,22 @@ import throttle from "lodash/throttle";
 export default function Page({ params, searchParams }: any) {
   if (params.country == "Czeck Republic") params.country = "Czeck";
   const [imagePaths, setImagePaths] = useState([]);
-  const [imgIdx, setImgIdx] = useState(0);
+  const [spinCnt, setSpinCnt] = useState(0);
   const [imgBoxSize, setImgBoxSize] = useState(400);
   const touchStartY = useRef(null);
+
+  useEffect(() => {}, [spinCnt]);
 
   const handleWheelEvent = throttle((event: any) => {
     const deltaY = event.deltaY;
     if (deltaY > 0) {
-      setImgIdx((imgId) => imgId + 1);
+      setSpinCnt((imgId) => imgId + 1);
     } else if (deltaY < 0) {
-      setImgIdx((imgId) => imgId - 1);
+      setSpinCnt((imgId) => imgId - 1);
     }
-  }, 2000);
+    // window.removeEventListener("wheel", handleWheelEvent);
+    window.addEventListener("wheel", handleWheelEvent, { once: true });
+  }, 1000);
 
   const handleTouchStart = (event: any) => {
     touchStartY.current = event.touches[0].clientY;
@@ -32,9 +36,9 @@ export default function Page({ params, searchParams }: any) {
     const swipeDistance = touchEndY - touchStartY.current;
 
     if (swipeDistance > 50) {
-      setImgIdx(imgIdx + 1);
+      setSpinCnt(spinCnt + 1);
     } else if (swipeDistance < -50) {
-      setImgIdx(imgIdx - 1);
+      setSpinCnt(spinCnt - 1);
     }
 
     touchStartY.current = null;
@@ -43,7 +47,7 @@ export default function Page({ params, searchParams }: any) {
   useEffect(() => {
     window.addEventListener("touchstart", handleTouchStart);
     window.addEventListener("touchmove", handleTouchMove);
-    window.addEventListener("wheel", handleWheelEvent);
+    window.addEventListener("wheel", handleWheelEvent, { once: true });
 
     return () => {
       // 컴포넌트 언마운트 시 이벤트 리스너 제거
@@ -57,11 +61,16 @@ export default function Page({ params, searchParams }: any) {
     if (imagePaths.length == 0) return 0;
 
     const numberOfImages = imagePaths.length;
-    if (idx >= 0) return idx % numberOfImages;
-    else return (numberOfImages + (idx % numberOfImages)) % numberOfImages;
+    const imageDistance = idx - 3;
+
+    const a = idx + 6 * Math.floor((spinCnt - imageDistance) / 6);
+
+    console.log(idx, 6 * Math.floor((spinCnt - imageDistance) / 6));
+
+    return (a + numberOfImages) % numberOfImages;
   };
+
   const getClassIdx = (idx: number) => {
-    console.log(idx);
     const numberOfCarousel = 6;
     if (idx >= 0) return idx % numberOfCarousel;
     else
@@ -84,13 +93,9 @@ export default function Page({ params, searchParams }: any) {
       ></Image>
       <div className="image-carousel">
         {Array.from({ length: 6 }, (_, idx) => (
-          <div
-            className={`image-box image-box-${getClassIdx(
-              getImageIdx(imgIdx + idx)
-            )}`}
-          >
+          <div className={`image-box image-box-${getClassIdx(idx + spinCnt)}`}>
             <Image
-              src={`/${imagePaths[getImageIdx(imgIdx + idx)]}`}
+              src={`/${imagePaths[getImageIdx(idx)]}`}
               alt="hello"
               fill
               style={{

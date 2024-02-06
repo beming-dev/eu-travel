@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import throttle from "lodash/throttle";
+import * as _ from "lodash";
 
 export default function Page({ params, searchParams }: any) {
   if (params.country == "Czeck Republic") params.country = "Czeck";
@@ -16,10 +17,11 @@ export default function Page({ params, searchParams }: any) {
 
   const handleWheelEvent = throttle((event: any) => {
     const deltaY = event.deltaY;
+    console.log(deltaY);
     if (deltaY > 0) {
-      setSpinCnt((imgId) => imgId + 1);
-    } else if (deltaY < 0) {
       setSpinCnt((imgId) => imgId - 1);
+    } else if (deltaY < 0) {
+      setSpinCnt((imgId) => imgId + 1);
     }
     // window.removeEventListener("wheel", handleWheelEvent);
     window.addEventListener("wheel", handleWheelEvent, { once: true });
@@ -63,10 +65,14 @@ export default function Page({ params, searchParams }: any) {
     const numberOfImages = imagePaths.length;
     const imageDistance = idx - 3;
 
-    const a = idx + 6 * Math.floor((spinCnt - imageDistance) / 6);
-
-    console.log(idx, 6 * Math.floor((spinCnt - imageDistance) / 6));
-
+    const spinNum = Math.floor((imageDistance + spinCnt) / 6);
+    let a;
+    if (spinNum < 0) {
+      a = idx - 6 * (spinNum + 1);
+    } else {
+      a = idx - 6 * spinNum;
+    }
+    // console.log(21, getClassIdx(idx + spinCnt), a, spinCnt, spinNum);
     return (a + numberOfImages) % numberOfImages;
   };
 
@@ -77,16 +83,29 @@ export default function Page({ params, searchParams }: any) {
       return (numberOfCarousel + (idx % numberOfCarousel)) % numberOfCarousel;
   };
 
+  const getBgImgIdx = () => {
+    const a = getImageIdx(
+      _.range(6)
+        .filter((idx) => getClassIdx(idx + spinCnt) == 0)
+        .at(0) || 0
+    );
+    console.log(a);
+    return a;
+  };
+
   useEffect(() => {
     axios
       .get("/api/image", { params: { country: params.country } })
       .then(({ data }) => setImagePaths(data.imagePaths));
   }, []);
 
+  // `url(/${
+  //   getImageIdx[_.range(6).find((idx) => getClassIdx(idx + spinCnt) == 0)]
+  // })`
   return (
-    <div className="main" style={{ backgroundImage: `url(/${imagePaths[0]})` }}>
+    <div className="main">
       <Image
-        src={`/${imagePaths[0]}`}
+        src={`/${imagePaths[getBgImgIdx()]}`}
         alt="hello"
         fill
         style={{ objectFit: "cover", filter: "blur(10px)" }}
@@ -140,6 +159,7 @@ export default function Page({ params, searchParams }: any) {
             left: 100%;
           }
           .image-box-1 {
+            z-index: 9;
             top: 20%;
             left: 75%;
           }
@@ -156,6 +176,7 @@ export default function Page({ params, searchParams }: any) {
             left: 25%;
           }
           .image-box-5 {
+            z-index: 9;
             top: 75%;
             left: 75%;
           }

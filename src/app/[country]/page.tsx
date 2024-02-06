@@ -10,7 +10,6 @@ export default function Page({ params, searchParams }: any) {
   if (params.country == "Czech Republic") params.country = "Czeck";
   const [imagePaths, setImagePaths] = useState([]);
   const [spinCnt, setSpinCnt] = useState(0);
-  const [imgBoxSize, setImgBoxSize] = useState(400);
   const touchStartY = useRef(null);
 
   useEffect(() => {}, [spinCnt]);
@@ -25,7 +24,7 @@ export default function Page({ params, searchParams }: any) {
     }
     // window.removeEventListener("wheel", handleWheelEvent);
     window.addEventListener("wheel", handleWheelEvent, { once: true });
-  }, 1000);
+  }, 500);
 
   const handleTouchStart = (event: any) => {
     touchStartY.current = event.touches[0].clientY;
@@ -151,8 +150,8 @@ export default function Page({ params, searchParams }: any) {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: ${imgBoxSize}px;
-            height: ${imgBoxSize}px;
+            width: 400px;
+            height: 400px;
             transition-duration: 0.5s;
           }
 
@@ -182,6 +181,21 @@ export default function Page({ params, searchParams }: any) {
             z-index: 9;
             top: 75%;
             left: 75%;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .image-carousel {
+            .image-box {
+              width: 150px;
+              height: 150px;
+            }
+
+            .image-box-0 {
+              z-index: 10;
+              top: 47.5%;
+              left: 100%;
+            }
           }
         }
       `}</style>

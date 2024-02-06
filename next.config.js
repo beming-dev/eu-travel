@@ -5,6 +5,7 @@ const nextConfig = {
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
+  basePath: "/eu-travel",
 };
 
 module.exports = nextConfig;

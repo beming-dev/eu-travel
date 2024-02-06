@@ -7,7 +7,7 @@ import throttle from "lodash/throttle";
 import * as _ from "lodash";
 
 export default function Page({ params, searchParams }: any) {
-  if (params.country == "Czeck Republic") params.country = "Czeck";
+  if (params.country == "Czech Republic") params.country = "Czeck";
   const [imagePaths, setImagePaths] = useState([]);
   const [spinCnt, setSpinCnt] = useState(0);
   const [imgBoxSize, setImgBoxSize] = useState(400);
@@ -112,7 +112,10 @@ export default function Page({ params, searchParams }: any) {
       ></Image>
       <div className="image-carousel">
         {Array.from({ length: 6 }, (_, idx) => (
-          <div className={`image-box image-box-${getClassIdx(idx + spinCnt)}`}>
+          <div
+            className={`image-box image-box-${getClassIdx(idx + spinCnt)}`}
+            key={idx}
+          >
             <Image
               src={`/${imagePaths[getImageIdx(idx)]}`}
               alt="hello"
